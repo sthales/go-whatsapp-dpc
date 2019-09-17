@@ -21,7 +21,6 @@ const (
 	MediaVideo    MediaType = "WhatsApp Video Keys"
 	MediaAudio    MediaType = "WhatsApp Audio Keys"
 	MediaDocument MediaType = "WhatsApp Document Keys"
-	MediaSticker  MediaType = "WhatsApp Sticker Keys"
 )
 
 var msgInfo MessageInfo
@@ -669,7 +668,7 @@ func getStickerMessage(msg *proto.WebMessageInfo) StickerMessage {
 Download is the function to retrieve media data. The media gets downloaded, validated and returned.
 */
 func (m *StickerMessage) Download() ([]byte, error) {
-	return Download(m.url, m.mediaKey, MediaSticker, int(m.fileLength))
+	return Download(m.url, m.mediaKey, MediaImage, int(m.fileLength))
 }
 
 func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
