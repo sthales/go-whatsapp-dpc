@@ -2,7 +2,7 @@ package whatsapp
 
 import (
 	"fmt"
-	"github.com/sthales/go-whatsapp/binary"
+	"github.com/sthales/go-whatsapp-dpc/binary"
 	"strconv"
 	"time"
 )

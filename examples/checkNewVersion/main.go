@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sthales/go-whatsapp"
+	"github.com/sthales/go-whatsapp-dpc"
 )
 
 type requestBody struct {

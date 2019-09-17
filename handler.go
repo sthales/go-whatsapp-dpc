@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/sthales/go-whatsapp/binary"
-	"github.com/sthales/go-whatsapp/binary/proto"
+	"github.com/sthales/go-whatsapp-dpc/binary"
+	"github.com/sthales/go-whatsapp-dpc/binary/proto"
 )
 
 /*

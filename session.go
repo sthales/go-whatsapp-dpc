@@ -12,9 +12,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sthales/go-whatsapp/crypto/cbc"
-	"github.com/sthales/go-whatsapp/crypto/curve25519"
-	"github.com/sthales/go-whatsapp/crypto/hkdf"
+	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
+	"github.com/sthales/go-whatsapp-dpc/crypto/curve25519"
+	"github.com/sthales/go-whatsapp-dpc/crypto/hkdf"
 )
 
 //represents the WhatsAppWeb client version

@@ -1,7 +1,7 @@
 package whatsapp
 
 import (
-	"github.com/sthales/go-whatsapp/binary"
+	"github.com/sthales/go-whatsapp-dpc/binary"
 	"strings"
 )
 

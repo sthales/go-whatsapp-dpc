@@ -2,7 +2,7 @@ package binary
 
 import (
 	"fmt"
-	"github.com/sthales/go-whatsapp/binary/proto"
+	"github.com/sthales/go-whatsapp-dpc/binary/proto"
 	"reflect"
 	"testing"
 )

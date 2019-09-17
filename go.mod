@@ -1,4 +1,4 @@
-module github.com/sthales/go-whatsapp
+module github.com/sthales/go-whatsapp-dpc
 
 require (
 
@@ -8,12 +8,12 @@ require (
 	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 )
 
-replace github.com/sthales/go-whatsapp => ./
+replace github.com/sthales/go-whatsapp-dpc => ./
 
-replace github.com/sthales/go-whatsapp/examples/echo => ./examples/echo
+replace github.com/sthales/go-whatsapp-dpc/examples/echo => ./examples/echo
 
-replace github.com/sthales/go-whatsapp/examples/restoreSession => ./examples/restoreSession
+replace github.com/sthales/go-whatsapp-dpc/examples/restoreSession => ./examples/restoreSession
 
-replace github.com/sthales/go-whatsapp/examples/sendImage => ./examples/sendImage
+replace github.com/sthales/go-whatsapp-dpc/examples/sendImage => ./examples/sendImage
 
-replace github.com/sthales/go-whatsapp/examples/sendTextMessages => ./examples/sendTextMessages
+replace github.com/sthales/go-whatsapp-dpc/examples/sendTextMessages => ./examples/sendTextMessages

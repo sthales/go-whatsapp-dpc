@@ -1,16 +1,16 @@
-# go-whatsapp
-Package sthales/go-whatsapp implements the WhatsApp Web API to provide a clean interface for developers. Big thanks to all contributors of the [sigalor/whatsapp-web-reveng](https://github.com/sigalor/whatsapp-web-reveng) project. The official WhatsApp Business API was released in August 2018. You can check it out [here](https://www.whatsapp.com/business/api).
+# go-whatsapp-dpc
+Package sthales/go-whatsapp-dpc implements the WhatsApp Web API to provide a clean interface for developers. Big thanks to all contributors of the [sigalor/whatsapp-web-reveng](https://github.com/sigalor/whatsapp-web-reveng) project. The official WhatsApp Business API was released in August 2018. You can check it out [here](https://www.whatsapp.com/business/api).
 
 ## Installation
 ```sh
-go get github.com/sthales/go-whatsapp
+go get github.com/sthales/go-whatsapp-dpc
 ```
 
 ## Usage
 ### Creating a connection
 ```go
 import (
-    whatsapp "github.com/sthales/go-whatsapp"
+    whatsapp "github.com/sthales/go-whatsapp-dpc"
 )
 
 wac, err := whatsapp.NewConn(20 * time.Second)
