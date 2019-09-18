@@ -673,8 +673,6 @@ func (m *StickerMessage) Download() ([]byte, error) {
 
 func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
-	fmt.Println(msg)
-
 	switch {
 
 	case msg.GetMessage().GetAudioMessage() != nil:

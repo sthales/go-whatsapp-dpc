@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"github.com/sthales/go-whatsapp-dpc/binary"
-	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
+	"github.com/sthales/go-whatsapp-dpc/binary"
+	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
 	"strconv"
 	"time"
 )
