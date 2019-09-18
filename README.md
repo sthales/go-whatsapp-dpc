@@ -6,7 +6,7 @@ Package sthales/go-whatsapp-dpc implements the WhatsApp Web API to provide a cle
 go get github.com/sthales/go-whatsapp-dpc
 ```
 
-## Usage
+## Usage 
 ### Creating a connection
 ```go
 import (
