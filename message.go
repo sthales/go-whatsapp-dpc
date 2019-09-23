@@ -317,7 +317,7 @@ func getImageProto(msg ImageMessage) *proto.WebMessageInfo {
 			Mimetype:      &msg.Type,
 			FileEncSha256: msg.fileEncSha256,
 			FileSha256:    msg.fileSha256,
-			FileLength:    &msg.fileLength,
+			FileLength:    &msg.FileLength,
 			ContextInfo:   contextInfo,
 		},
 	}
@@ -328,7 +328,7 @@ func getImageProto(msg ImageMessage) *proto.WebMessageInfo {
 Download is the function to retrieve media data. The media gets downloaded, validated and returned.
 */
 func (m *ImageMessage) Download() ([]byte, error) {
-	return Download(m.url, m.mediaKey, MediaImage, int(m.fileLength))
+	return Download(m.url, m.mediaKey, MediaImage, int(m.FileLength))
 }
 
 /*
