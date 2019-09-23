@@ -38,7 +38,7 @@ func (wac *Conn) Send(msg interface{}) (string, error) {
 		msgInfo = getMessageInfo(msgProto)
 		ch, err = wac.sendProto(msgProto)
 	case ImageMessage:
-		m.url, m.mediaKey, m.fileEncSha256, m.fileSha256, m.fileLength, err = wac.Upload(m.Content, MediaImage)
+		m.url, m.mediaKey, m.fileEncSha256, m.fileSha256, m.FileLength, err = wac.Upload(m.Content, MediaImage)
 		if err != nil {
 			return "ERROR", fmt.Errorf("image upload failed: %v", err)
 		}
