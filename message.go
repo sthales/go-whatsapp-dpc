@@ -277,7 +277,9 @@ type ImageMessage struct {
 	mediaKey      []byte
 	fileEncSha256 []byte
 	fileSha256    []byte
-	fileLength    uint64
+	FileLength    uint64
+	Width         uint32
+	Height        uint32
 	ContextInfo   ContextInfo
 }
 
@@ -293,7 +295,9 @@ func getImageMessage(msg *proto.WebMessageInfo) ImageMessage {
 		Type:          image.GetMimetype(),
 		fileEncSha256: image.GetFileEncSha256(),
 		fileSha256:    image.GetFileSha256(),
-		fileLength:    image.GetFileLength(),
+		FileLength:    image.GetFileLength(),
+		Width:         image.GetWidth(),
+		Height:        image.GetHeight(),
 		ContextInfo:   getMessageContext(image.GetContextInfo()),
 	}
 
