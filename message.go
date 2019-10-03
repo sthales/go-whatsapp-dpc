@@ -410,6 +410,7 @@ type AudioMessage struct {
 	Length        uint32
 	Type          string
 	Content       io.Reader
+	Ptt           bool
 	url           string
 	mediaKey      []byte
 	fileEncSha256 []byte
@@ -678,6 +679,33 @@ func (m *StickerMessage) Download() ([]byte, error) {
 	return Download(m.url, m.mediaKey, MediaImage, int(m.fileLength))
 }
 
+/*
+ContactMessage represents a contact message.
+*/
+type ContactMessage struct {
+	Info MessageInfo
+
+	DisplayName string
+	Vcard       string
+
+	ContextInfo ContextInfo
+}
+
+func getContactMessage(msg *proto.WebMessageInfo) ContactMessage {
+	contact := msg.GetMessage().GetContactMessage()
+
+	ContactMessage := ContactMessage{
+		Info: getMessageInfo(msg),
+
+		DisplayName: contact.GetDisplayName(),
+		Vcard:       contact.GetVcard(),
+
+		ContextInfo: getMessageContext(contact.GetContextInfo()),
+	}
+
+	return ContactMessage
+}
+
 func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	switch {
@@ -708,6 +736,9 @@ func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	case msg.GetMessage().GetStickerMessage() != nil:
 		return getStickerMessage(msg)
+
+	case msg.GetMessage().GetContactMessage() != nil:
+		return getContactMessage(msg)
 
 	default:
 		//cannot match message

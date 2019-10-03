@@ -16,3 +16,5 @@ replace github.com/sthales/go-whatsapp-dpc/examples/restoreSession => ./examples
 replace github.com/sthales/go-whatsapp-dpc/examples/sendImage => ./examples/sendImage
 
 replace github.com/sthales/go-whatsapp-dpc/examples/sendTextMessages => ./examples/sendTextMessages
+
+go 1.13
