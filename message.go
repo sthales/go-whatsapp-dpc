@@ -417,7 +417,6 @@ type AudioMessage struct {
 	fileSha256    []byte
 	fileLength    uint64
 	ContextInfo   ContextInfo
-	Ptt           bool
 }
 
 func getAudioMessage(msg *proto.WebMessageInfo) AudioMessage {
