@@ -77,6 +77,14 @@ func (wac *Conn) Send(msg interface{}) (string, error) {
 		msgProto = GetLiveLocationProto(m)
 		msgInfo = getMessageInfo(msgProto)
 		ch, err = wac.sendProto(msgProto)
+
+	case ProtocolMessage:
+
+		msgProto = getProtocolMessageProto(m)
+		msgInfo = getMessageInfo(msgProto)
+
+		ch, err = wac.sendProto(msgProto)
+
 	default:
 		return "ERROR", fmt.Errorf("cannot match type %T, use message types declared in the package", msg)
 	}
@@ -705,6 +713,52 @@ func getContactMessage(msg *proto.WebMessageInfo) ContactMessage {
 	return ContactMessage
 }
 
+/*
+ProtocolMessage represents a ProtocolMessage message.
+*/
+type ProtocolMessage struct {
+	Info MessageInfo
+
+	Type proto.ProtocolMessage_PROTOCOL_MESSAGE_TYPE
+
+	Id string
+
+	Key *proto.MessageKey
+}
+
+func getProtocolMessageProto(msg ProtocolMessage) *proto.WebMessageInfo {
+
+	p := getInfoProto(&msg.Info)
+
+	protocolType := proto.ProtocolMessage_PROTOCOL_MESSAGE_TYPE(msg.Type)
+
+	p.Message = &proto.Message{
+		ProtocolMessage: &proto.ProtocolMessage{
+			Type: &protocolType,
+			Key: &proto.MessageKey{
+				FromMe:    &msg.Info.FromMe,
+				RemoteJid: &msg.Info.RemoteJid,
+				Id:        &msg.Id,
+			},
+		},
+	}
+
+	return p
+}
+
+func getProtocolMessage(msg *proto.WebMessageInfo) ProtocolMessage {
+	protocol := msg.GetMessage().GetProtocolMessage()
+
+	ProtocolMessage := ProtocolMessage{
+		Info: getMessageInfo(msg),
+
+		Type: protocol.GetType(),
+		Key:  protocol.GetKey(),
+	}
+
+	return ProtocolMessage
+}
+
 func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	switch {
@@ -738,6 +792,9 @@ func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	case msg.GetMessage().GetContactMessage() != nil:
 		return getContactMessage(msg)
+
+	case msg.GetMessage().GetProtocolMessage() != nil:
+		return getProtocolMessage(msg)
 
 	default:
 		//cannot match message
