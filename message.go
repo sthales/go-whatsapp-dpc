@@ -714,7 +714,7 @@ func getContactMessage(msg *proto.WebMessageInfo) ContactMessage {
 }
 
 /*
-ProtocolMessage represents a ProtocolMessage message.
+ProtocolMessage represents a Protocol message.
 */
 type ProtocolMessage struct {
 	Info MessageInfo
