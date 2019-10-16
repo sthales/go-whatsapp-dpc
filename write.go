@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -15,13 +14,11 @@ import (
 	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
 )
 
-var writerLock sync.RWMutex
-
 //writeJson enqueues a json message into the writeChan
 func (wac *Conn) writeJson(data []interface{}) (<-chan string, error) {
 
-	writerLock.Lock()
-	defer writerLock.Unlock()
+	wac.writerLock.Lock()
+	defer wac.writerLock.Unlock()
 
 	d, err := json.Marshal(data)
 	if err != nil {
@@ -46,8 +43,8 @@ func (wac *Conn) writeBinary(node binary.Node, metric metric, flag flag, message
 		return nil, ErrMissingMessageTag
 	}
 
-	writerLock.Lock()
-	defer writerLock.Unlock()
+	wac.writerLock.Lock()
+	defer wac.writerLock.Unlock()
 
 	data, err := wac.encryptBinaryMessage(node)
 	if err != nil {
