@@ -5,13 +5,14 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"strings"
+
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/sthales/go-whatsapp-dpc/binary"
 	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
-	"io"
-	"io/ioutil"
-	"strings"
 )
 
 func (wac *Conn) readPump() {

@@ -5,16 +5,20 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 	"github.com/sthales/go-whatsapp-dpc/binary"
 	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
-	"strconv"
-	"time"
 )
 
 //writeJson enqueues a json message into the writeChan
 func (wac *Conn) writeJson(data []interface{}) (<-chan string, error) {
+
+	wac.msgCount++
+
 	d, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -29,7 +33,6 @@ func (wac *Conn) writeJson(data []interface{}) (<-chan string, error) {
 		return nil, err
 	}
 
-	wac.msgCount++
 	return ch, nil
 }
 
