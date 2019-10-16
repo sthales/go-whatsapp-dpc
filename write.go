@@ -16,9 +16,6 @@ import (
 
 //writeJson enqueues a json message into the writeChan
 func (wac *Conn) writeJson(data []interface{}) (<-chan string, error) {
-
-	wac.msgCount++
-
 	d, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -33,6 +30,7 @@ func (wac *Conn) writeJson(data []interface{}) (<-chan string, error) {
 		return nil, err
 	}
 
+	wac.msgCount++
 	return ch, nil
 }
 
