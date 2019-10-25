@@ -139,6 +139,8 @@ type MessageInfo struct {
 	Timestamp uint64
 	PushName  string
 	Status    MessageStatus
+	Broadcast bool
+	Starred   bool
 
 	Source *proto.WebMessageInfo
 }
@@ -163,6 +165,8 @@ func getMessageInfo(msg *proto.WebMessageInfo) MessageInfo {
 		Timestamp: msg.GetMessageTimestamp(),
 		Status:    MessageStatus(msg.GetStatus()),
 		PushName:  msg.GetPushName(),
+		Broadcast: msg.GetBroadcast(),
+		Starred:   msg.GetStarred(),
 		Source:    msg,
 	}
 }
@@ -199,6 +203,7 @@ type ContextInfo struct {
 	QuotedMessage   *proto.Message
 	Participant     string
 	IsForwarded     bool
+	ForwardingScore uint32
 }
 
 func getMessageContext(msg *proto.ContextInfo) ContextInfo {
@@ -208,24 +213,26 @@ func getMessageContext(msg *proto.ContextInfo) ContextInfo {
 		QuotedMessage:   msg.GetQuotedMessage(),
 		Participant:     msg.GetParticipant(),
 		IsForwarded:     msg.GetIsForwarded(),
+		ForwardingScore: msg.GetForwardingScore(),
 	}
 }
 
 func getContextInfoProto(context *ContextInfo) *proto.ContextInfo {
-	if len(context.QuotedMessageID) > 0 {
-		contextInfo := &proto.ContextInfo{
-			StanzaId: &context.QuotedMessageID,
-		}
 
-		if &context.QuotedMessage != nil {
-			contextInfo.QuotedMessage = context.QuotedMessage
-			contextInfo.Participant = &context.Participant
-		}
+	contextInfo := &proto.ContextInfo{}
 
-		return contextInfo
+	if len(context.QuotedMessageID) > 0 && len(context.Participant) > 0 && len(context.QuotedMessageID) > 0 {
+		contextInfo.QuotedMessage = context.QuotedMessage
+		contextInfo.Participant = &context.Participant
+		contextInfo.StanzaId = &context.QuotedMessageID
 	}
 
-	return nil
+	if context.IsForwarded && context.ForwardingScore > 0 {
+		contextInfo.IsForwarded = &context.IsForwarded
+		contextInfo.ForwardingScore = &context.ForwardingScore
+	}
+
+	return contextInfo
 }
 
 /*
