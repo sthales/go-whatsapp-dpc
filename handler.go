@@ -332,13 +332,21 @@ func (wac *Conn) handleContacts(contacts interface{}) {
 		}
 
 		jid := strings.Replace(contactNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
-		contactList = append(contactList, Contact{
-			jid,
-			contactNode.Attributes["notify"],
+		wac.Store.Contacts[jid] = Contact{
+			contactNode.Attributes["jid"],
 			contactNode.Attributes["name"],
+			contactNode.Attributes["type"],
 			contactNode.Attributes["short"],
-		})
+			contactNode.Attributes["notify"],
+			contactNode.Attributes["status_mute"],
+			contactNode.Attributes["index"],
+			contactNode.Attributes["vname"],
+			contactNode.Attributes["enterprise"],
+		}
+
+		contactList = append(contactList, wac.Store.Contacts[jid])
 	}
+
 	for _, h := range wac.handler {
 		if x, ok := h.(ContactListHandler); ok {
 			if wac.shouldCallSynchronously(h) {
@@ -351,6 +359,8 @@ func (wac *Conn) handleContacts(contacts interface{}) {
 }
 
 func (wac *Conn) handleChats(chats interface{}) {
+	// fmt.Println("chats:", chats)
+
 	var chatList []Chat
 	c, ok := chats.([]interface{})
 	if !ok {
@@ -363,15 +373,31 @@ func (wac *Conn) handleChats(chats interface{}) {
 		}
 
 		jid := strings.Replace(chatNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
-		chatList = append(chatList, Chat{
-			jid,
-			chatNode.Attributes["name"],
-			chatNode.Attributes["count"],
+		wac.Store.Chats[jid] = Chat{
+			chatNode.Attributes["jid"],
 			chatNode.Attributes["t"],
+			chatNode.Attributes["type"],
+			chatNode.Attributes["kind"],
+			"",
+			chatNode.Attributes["before"],
+			"true" == chatNode.Attributes["archive"],
+			"true" == chatNode.Attributes["read_only"],
+			chatNode.Attributes["count"],
 			chatNode.Attributes["mute"],
-			chatNode.Attributes["spam"],
-		})
+			chatNode.Attributes["modify_tag"],
+			chatNode.Attributes["name"],
+			"true" == chatNode.Attributes["message"],
+			"true" == chatNode.Attributes["star"],
+			"false" == chatNode.Attributes["spam"],
+			chatNode.Attributes["pin"],
+			chatNode.Attributes["old_jid"],
+			chatNode.Attributes["new_jid"],
+			chatNode.Attributes["ephemeral"],
+		}
+
+		chatList = append(chatList, wac.Store.Chats[jid])
 	}
+
 	for _, h := range wac.handler {
 		if x, ok := h.(ChatListHandler); ok {
 			if wac.shouldCallSynchronously(h) {
@@ -388,6 +414,10 @@ func (wac *Conn) dispatch(msg interface{}) {
 		return
 	}
 
+	fmt.Println("---------------------------------------------------------")
+	fmt.Println("%v", msg)
+	fmt.Println("---------------------------------------------------------")
+
 	switch message := msg.(type) {
 	case *binary.Node:
 		if message.Description == "action" {
@@ -400,10 +430,11 @@ func (wac *Conn) dispatch(msg interface{}) {
 				}
 			}
 		} else if message.Description == "response" && message.Attributes["type"] == "contacts" {
-			wac.updateContacts(message.Content)
+			// wac.updateContacts(message.Content)
 			wac.handleContacts(message.Content)
+			// fmt.Printf("contacts received")
 		} else if message.Description == "response" && message.Attributes["type"] == "chat" {
-			wac.updateChats(message.Content)
+			// wac.updateChats(message.Content)
 			wac.handleChats(message.Content)
 		}
 	case error:
