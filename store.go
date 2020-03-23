@@ -6,52 +6,52 @@ type Store struct {
 }
 
 type Contact struct {
-	// Jid    string
-	// Notify string
-	// Name   string
-	// Short  string
+	Jid    string
+	Notify string
+	Name   string
+	Short  string
 
-	Jid           string
-	Name          string
-	Type          string
-	ShortName     string
-	Pushname      string
-	StatusMute    string
-	SectionHeader string
-	VerifiedName  string
-	// Labels string
-	IsEnterprise string
+	// Jid           string
+	// Name          string
+	// Type          string
+	// ShortName     string
+	// Pushname      string
+	// StatusMute    string
+	// SectionHeader string
+	// VerifiedName  string
+	// // Labels string
+	// IsEnterprise string
 }
 
 type Chat struct {
-	// Jid             string
-	// Name            string
-	// Unread          string
-	// LastMessageTime string
-	// IsMuted         string
-	// IsMarkedSpam    string
-	// isReadOnly string
+	Jid             string
+	Name            string
+	Unread          string
+	LastMessageTime string
+	IsMuted         string
+	IsMarkedSpam    string
+	// isReadOnly      string
 
-	Jid                string
-	T                  string
-	Type               string
-	Kind               string
-	Keys               string
-	Before             string
-	Archive            bool
-	IsReadOnly         bool
-	UnreadCount        string
-	MuteExpiration     string
-	ModifyTag          string
-	Name               string
-	PendingMsgs        bool
-	Star               bool
-	NotSpam            bool
-	Pin                string
-	ChangeNumberOldJid string
-	ChangeNumberNewJid string
-	EphemeralDuration  string
-	// Labels string
+	// Jid                string
+	// T                  string
+	// Type               string
+	// Kind               string
+	// Keys               string
+	// Before             string
+	// Archive            bool
+	// IsReadOnly         bool
+	// UnreadCount        string
+	// MuteExpiration     string
+	// ModifyTag          string
+	// Name               string
+	// PendingMsgs        bool
+	// Star               bool
+	// NotSpam            bool
+	// Pin                string
+	// ChangeNumberOldJid string
+	// ChangeNumberNewJid string
+	// EphemeralDuration  string
+	// // Labels string
 }
 
 func newStore() *Store {
