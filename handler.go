@@ -385,11 +385,11 @@ func (wac *Conn) dispatch(msg interface{}) {
 				}
 			}
 		} else if message.Description == "response" && message.Attributes["type"] == "contacts" {
-			// wac.updateContacts(message.Content)
+			wac.updateContacts(message.Content)
 			wac.handleContacts(message.Content)
 			// fmt.Printf("contacts received")
 		} else if message.Description == "response" && message.Attributes["type"] == "chat" {
-			// wac.updateChats(message.Content)
+			wac.updateChats(message.Content)
 			wac.handleChats(message.Content)
 		}
 	case error:

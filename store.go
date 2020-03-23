@@ -1,5 +1,11 @@
 package whatsapp
 
+import (
+	"strings"
+
+	"github.com/sthales/go-whatsapp-dpc/binary"
+)
+
 type Store struct {
 	Contacts map[string]Contact
 	Chats    map[string]Chat
@@ -61,71 +67,48 @@ func newStore() *Store {
 	}
 }
 
-// func (wac *Conn) updateContacts(contacts interface{}, jid string) {
+func (wac *Conn) updateContacts(contacts interface{}) {
+	c, ok := contacts.([]interface{})
+	if !ok {
+		return
+	}
 
-// 	wac.Store.Contacts[jid] = contacts
+	for _, contact := range c {
+		contactNode, ok := contact.(binary.Node)
+		if !ok {
+			continue
+		}
 
-// 	// c, ok := contacts.([]interface{})
-// 	// if !ok {
-// 	// 	return
-// 	// }
+		jid := strings.Replace(contactNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
+		wac.Store.Contacts[jid] = Contact{
+			jid,
+			contactNode.Attributes["notify"],
+			contactNode.Attributes["name"],
+			contactNode.Attributes["short"],
+		}
+	}
+}
 
-// 	// for _, contact := range c {
-// 	// 	contactNode, ok := contact.(binary.Node)
-// 	// 	if !ok {
-// 	// 		continue
-// 	// 	}
+func (wac *Conn) updateChats(chats interface{}) {
+	c, ok := chats.([]interface{})
+	if !ok {
+		return
+	}
 
-// 	// 	jid := strings.Replace(contactNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
-// 	// 	wac.Store.Contacts[jid] = Contact{
-// 	// 		contactNode.Attributes["jid"],
-// 	// 		contactNode.Attributes["name"],
-// 	// 		contactNode.Attributes["type"],
-// 	// 		contactNode.Attributes["short"],
-// 	// 		contactNode.Attributes["notify"],
-// 	// 		"",
-// 	// 		"",
-// 	// 		contactNode.Attributes["status_mute"],
-// 	// 		contactNode.Attributes["index"],
-// 	// 		contactNode.Attributes["vname"],
-// 	// 		contactNode.Attributes["enterprise"],
-// 	// 	}
-// 	// }
-// }
+	for _, chat := range c {
+		chatNode, ok := chat.(binary.Node)
+		if !ok {
+			continue
+		}
 
-// func (wac *Conn) updateChats(chats interface{}) {
-// 	c, ok := chats.([]interface{})
-// 	if !ok {
-// 		return
-// 	}
-
-// 	for _, chat := range c {
-// 		chatNode, ok := chat.(binary.Node)
-// 		if !ok {
-// 			continue
-// 		}
-
-// 		jid := strings.Replace(chatNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
-// 		wac.Store.Chats[jid] = Chat{
-// 			chatNode.Attributes["jid"],
-// 			chatNode.Attributes["t"],
-// 			chatNode.Attributes["type"],
-// 			chatNode.Attributes["kind"],
-// 			"",
-// 			chatNode.Attributes["before"],
-// 			chatNode.Attributes["archive"],
-// 			chatNode.Attributes["read_only"],
-// 			chatNode.Attributes["count"],
-// 			chatNode.Attributes["mute"],
-// 			chatNode.Attributes["modify_tag"],
-// 			chatNode.Attributes["name"],
-// 			chatNode.Attributes["message"],
-// 			chatNode.Attributes["star"],
-// 			chatNode.Attributes["spam"],
-// 			chatNode.Attributes["pin"],
-// 			chatNode.Attributes["old_jid"],
-// 			chatNode.Attributes["new_jid"],
-// 			chatNode.Attributes["ephemeral"],
-// 		}
-// 	}
-// }
+		jid := strings.Replace(chatNode.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
+		wac.Store.Chats[jid] = Chat{
+			jid,
+			chatNode.Attributes["name"],
+			chatNode.Attributes["count"],
+			chatNode.Attributes["t"],
+			chatNode.Attributes["mute"],
+			chatNode.Attributes["spam"],
+		}
+	}
+}
