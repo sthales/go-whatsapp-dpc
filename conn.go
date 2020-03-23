@@ -140,6 +140,14 @@ func NewConnWithProxy(timeout time.Duration, proxy func(*http.Request) (*url.URL
 	return wac, wac.connect()
 }
 
+func (wac *Conn) IsConnected() bool {
+	return wac.connected
+}
+
+func (wac *Conn) IsLoggedIn() bool {
+	return wac.loggedIn
+}
+
 // connect should be guarded with wsWriteMutex
 func (wac *Conn) connect() (err error) {
 	if wac.connected {
@@ -211,6 +219,10 @@ func (wac *Conn) Disconnect() (Session, error) {
 		return Session{}, err
 	}
 	return *wac.session, err
+}
+
+func (wac *Conn) IsLoginInProgress() bool {
+	return wac.sessionLock == 1
 }
 
 func (wac *Conn) AdminTest() (bool, error) {
