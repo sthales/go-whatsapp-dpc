@@ -1,10 +1,11 @@
 module github.com/sthales/go-whatsapp-dpc
 
 require (
-	github.com/golang/protobuf v1.3.0
-	github.com/gorilla/websocket v1.4.0
-	github.com/pkg/errors v0.8.1
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	github.com/Rhymen/go-whatsapp v0.1.0
+	github.com/golang/protobuf v1.3.5
+	github.com/gorilla/websocket v1.4.2
+	github.com/pkg/errors v0.9.1
+	golang.org/x/crypto v0.0.0-20200320181102-891825fb96df
 )
 
 replace github.com/sthales/go-whatsapp-dpc => ./

@@ -8,3 +8,5 @@ require (
 )
 
 replace github.com/sthales/go-whatsapp-dpc => ../../
+
+go 1.13
