@@ -162,6 +162,29 @@ func (wac *Conn) GetClientVersion() []int {
 	return waVersion
 }
 
+func (wac *Conn) adminInitRequest(clientId string) (string, time.Duration, error) {
+	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName}, clientId, true}
+	loginChan, err := wac.writeJson(login)
+	if err != nil {
+		return "", 0, fmt.Errorf("error writing login: %v\n", err)
+	}
+
+	var r string
+	select {
+	case r = <-loginChan:
+	case <-time.After(wac.msgTimeout):
+		return "", 0, fmt.Errorf("login connection timed out")
+	}
+
+	var resp map[string]interface{}
+	fmt.Println(r)
+	if err = json.Unmarshal([]byte(r), &resp); err != nil {
+		return "", 0, fmt.Errorf("error decoding login resp: %v\n", err)
+	}
+
+	return resp["ref"].(string), time.Duration(resp["ttl"].(float64)) * time.Millisecond, nil
+}
+
 /*
 Login is the function that creates a new whatsapp session and logs you in. If you do not want to scan the qr code
 every time, you should save the returned session and use RestoreWithSession the next time. Login takes a writable channel
@@ -256,6 +279,133 @@ func (wac *Conn) Login(qrChan chan<- string) (Session, error) {
 		}
 	case <-time.After(time.Duration(resp["ttl"].(float64)) * time.Millisecond):
 		return session, fmt.Errorf("qr code scan timed out")
+	}
+
+	info := resp2[1].(map[string]interface{})
+
+	wac.Info = newInfoFromReq(info)
+
+	session.ClientToken = info["clientToken"].(string)
+	session.ServerToken = info["serverToken"].(string)
+	session.Wid = info["wid"].(string)
+	s := info["secret"].(string)
+	decodedSecret, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		return session, fmt.Errorf("error decoding secret: %v", err)
+	}
+
+	var pubKey [32]byte
+	copy(pubKey[:], decodedSecret[:32])
+
+	sharedSecret := curve25519.GenerateSharedSecret(*priv, pubKey)
+
+	hash := sha256.New
+
+	nullKey := make([]byte, 32)
+	h := hmac.New(hash, nullKey)
+	h.Write(sharedSecret)
+
+	sharedSecretExtended, err := hkdf.Expand(h.Sum(nil), 80, "")
+	if err != nil {
+		return session, fmt.Errorf("hkdf error: %v", err)
+	}
+
+	//login validation
+	checkSecret := make([]byte, 112)
+	copy(checkSecret[:32], decodedSecret[:32])
+	copy(checkSecret[32:], decodedSecret[64:])
+	h2 := hmac.New(hash, sharedSecretExtended[32:64])
+	h2.Write(checkSecret)
+	if !hmac.Equal(h2.Sum(nil), decodedSecret[32:64]) {
+		return session, fmt.Errorf("abort login")
+	}
+
+	keysEncrypted := make([]byte, 96)
+	copy(keysEncrypted[:16], sharedSecretExtended[64:])
+	copy(keysEncrypted[16:], decodedSecret[64:])
+
+	keyDecrypted, err := cbc.Decrypt(sharedSecretExtended[:32], nil, keysEncrypted)
+	if err != nil {
+		return session, fmt.Errorf("error decryptAes: %v", err)
+	}
+
+	session.EncKey = keyDecrypted[:32]
+	session.MacKey = keyDecrypted[32:64]
+	wac.session = &session
+	wac.loggedIn = true
+
+	return session, nil
+}
+
+func (wac *Conn) LoginWithRetry(qrChan chan<- string, maxRetries int) (Session, error) {
+	session := Session{}
+	//Makes sure that only a single Login or Restore can happen at the same time
+	if !atomic.CompareAndSwapUint32(&wac.sessionLock, 0, 1) {
+		return session, ErrLoginInProgress
+	}
+	defer atomic.StoreUint32(&wac.sessionLock, 0)
+
+	if wac.loggedIn {
+		return session, ErrAlreadyLoggedIn
+	}
+
+	if err := wac.connect(); err != nil && err != ErrAlreadyConnected {
+		return session, err
+	}
+
+	//logged in?!?
+	if wac.session != nil && (wac.session.EncKey != nil || wac.session.MacKey != nil) {
+		return session, fmt.Errorf("already logged in")
+	}
+
+	clientId := make([]byte, 16)
+	_, err := rand.Read(clientId)
+	if err != nil {
+		return session, fmt.Errorf("error creating random ClientId: %v", err)
+	}
+
+	session.ClientId = base64.StdEncoding.EncodeToString(clientId)
+
+	priv, pub, err := curve25519.GenerateKey()
+	if err != nil {
+		return session, fmt.Errorf("error generating keys: %v\n", err)
+	}
+
+	//listener for Login response
+	s1 := make(chan string, 1)
+	wac.listener.Lock()
+	wac.listener.m["s1"] = s1
+	wac.listener.Unlock()
+
+	ref, ttl, err := wac.adminInitRequest(session.ClientId)
+	if err != nil {
+		return session, err
+	}
+	qrChan <- fmt.Sprintf("%v,%v,%v", ref, base64.StdEncoding.EncodeToString(pub[:]), session.ClientId)
+
+	wac.loginSessionLock.Lock()
+	defer wac.loginSessionLock.Unlock()
+	var resp2 []interface{}
+For:
+	for {
+		select {
+		case r1 := <-s1:
+			if err := json.Unmarshal([]byte(r1), &resp2); err != nil {
+				return session, fmt.Errorf("error decoding qr code resp: %v", err)
+			}
+			break For
+		case <-time.After(ttl):
+			maxRetries--
+			if maxRetries < 0 {
+				_, _ = wac.Disconnect()
+				return session, ErrLoginTimedOut
+			}
+			ref, ttl, err = wac.adminInitRequest(session.ClientId)
+			if err != nil {
+				return session, err
+			}
+			qrChan <- fmt.Sprintf("%v,%v,%v", ref, base64.StdEncoding.EncodeToString(pub[:]), session.ClientId)
+		}
 	}
 
 	info := resp2[1].(map[string]interface{})
