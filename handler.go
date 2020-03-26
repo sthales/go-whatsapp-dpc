@@ -102,7 +102,7 @@ The ContactsArrayMessageHandler interface needs to be implemented to receive con
 */
 type ContactsArrayMessageHandler interface {
 	Handler
-	HandleContactsArrayMessage
+	HandleContactsArrayMessage(message ContactsArrayMessage)
 }
 
 /*

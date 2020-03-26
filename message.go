@@ -731,11 +731,23 @@ type ContactsArrayMessage struct {
 func getContactsArrayMessage(msg *proto.WebMessageInfo) ContactsArrayMessage {
 	contacts := msg.GetMessage().GetContactsArrayMessage()
 
+	ct := contacts.GetContacts()
+
+	var cct []*ContactMessage
+	for _, c := range ct {
+		tst := ContactMessage{
+			DisplayName: c.GetDisplayName(),
+			Vcard:       c.GetVcard(),
+		}
+
+		cct = append(cct, &tst)
+	}
+
 	contactsArrayMessage := ContactsArrayMessage{
 		Info: getMessageInfo(msg),
 
 		DisplayName: contacts.GetDisplayName(),
-		Vcard:       contacts.GetContacts(),
+		Contacts:    cct,
 
 		ContextInfo: getMessageContext(contacts.GetContextInfo()),
 	}
