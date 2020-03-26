@@ -715,6 +715,34 @@ func getContactMessageProto(msg ContactMessage) *proto.WebMessageInfo {
 	return p
 }
 
+/*
+ContactsArrayMessage represents an array of contacts
+*/
+
+type ContactsArrayMessage struct {
+	Info MessageInfo
+
+	DisplayName string
+	Contacts    []*ContactMessage
+
+	ContextInfo ContextInfo
+}
+
+func getContactsArrayMessage(msg *proto.WebMessageInfo) ContactsArrayMessage {
+	contacts := msg.GetMessage().GetContactsArrayMessage()
+
+	contactsArrayMessage := ContactsArrayMessage{
+		Info: getMessageInfo(msg),
+
+		DisplayName: contacts.GetDisplayName(),
+		Vcard:       contacts.GetContacts(),
+
+		ContextInfo: getMessageContext(contacts.GetContextInfo()),
+	}
+
+	return contactsArrayMessage
+}
+
 func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	switch {
