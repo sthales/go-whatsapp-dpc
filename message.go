@@ -729,27 +729,24 @@ type ContactsArrayMessage struct {
 }
 
 func getContactsArrayMessage(msg *proto.WebMessageInfo) ContactsArrayMessage {
-	contacts := msg.GetMessage().GetContactsArrayMessage()
+	contactsArray := msg.GetMessage().GetContactsArrayMessage()
 
-	ct := contacts.GetContacts()
-
-	var cct []*ContactMessage
-	for _, c := range ct {
-		tst := ContactMessage{
-			DisplayName: c.GetDisplayName(),
-			Vcard:       c.GetVcard(),
-		}
-
-		cct = append(cct, &tst)
+	var contacts []*ContactMessage
+	for _, contact := range contactsArray.GetContacts() {
+		contacts = append(contacts, &ContactMessage{
+			DisplayName: contact.GetDisplayName(),
+			Vcard:       contact.GetVcard(),
+			ContextInfo: getMessageContext(contact.GetContextInfo()),
+		})
 	}
 
 	contactsArrayMessage := ContactsArrayMessage{
 		Info: getMessageInfo(msg),
 
-		DisplayName: contacts.GetDisplayName(),
-		Contacts:    cct,
+		DisplayName: contactsArray.GetDisplayName(),
+		Contacts:    contacts,
 
-		ContextInfo: getMessageContext(contacts.GetContextInfo()),
+		ContextInfo: getMessageContext(contactsArray.GetContextInfo()),
 	}
 
 	return contactsArrayMessage
