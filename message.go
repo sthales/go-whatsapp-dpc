@@ -785,6 +785,8 @@ func ParseProtoMessage(msg *proto.WebMessageInfo) interface{} {
 
 	case msg.GetMessage().GetContactMessage() != nil:
 		return getContactMessage(msg)
+	case msg.GetMessage().GetContactsArrayMessage() != nil:
+		return getContactsArrayMessage(msg)
 
 	default:
 		//cannot match message
