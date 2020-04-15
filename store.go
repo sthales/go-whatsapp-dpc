@@ -34,8 +34,10 @@ type Chat struct {
 	Name            string
 	Unread          string
 	LastMessageTime string
-	IsMuted         string
+	Mute            string
 	IsMarkedSpam    string
+	Pin             string
+	Archive         bool
 	// isReadOnly      string
 
 	// Jid                string
@@ -109,6 +111,8 @@ func (wac *Conn) updateChats(chats interface{}) {
 			chatNode.Attributes["t"],
 			chatNode.Attributes["mute"],
 			chatNode.Attributes["spam"],
+			chatNode.Attributes["pin"],
+			chatNode.Attributes["archive"] == "true",
 		}
 	}
 }

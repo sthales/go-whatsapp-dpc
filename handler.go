@@ -141,6 +141,11 @@ type ChatListHandler interface {
 	HandleChatList(contacts []Chat)
 }
 
+type ActionHandler interface {
+	Handler
+	HandleAction(action Action)
+}
+
 /*
 AddHandler adds an handler to the list of handler that receive dispatched messages.
 The provided handler must at least implement the Handler interface. Additionally implemented
@@ -369,6 +374,8 @@ func (wac *Conn) handleChats(chats interface{}) {
 			chatNode.Attributes["t"],
 			chatNode.Attributes["mute"],
 			chatNode.Attributes["spam"],
+			chatNode.Attributes["pin"],
+			chatNode.Attributes["archive"] == "true",
 		})
 	}
 	for _, h := range wac.handler {
@@ -380,6 +387,83 @@ func (wac *Conn) handleChats(chats interface{}) {
 			}
 		}
 	}
+}
+
+// Marshal actions to json and handle with HandleJsonMessages. NEEDS A LOT OF IMRPOVEMENTS. DO IT LATER.
+func (wac *Conn) handleActionNode(actionContent interface{}) {
+
+	ac, ok := actionContent.([]binary.Node)
+	if !ok {
+		return
+	}
+
+	for _, action := range ac {
+
+		groupedAction := groupActionsByType(action)
+		switch groupedAction.Description {
+		case "chat":
+
+			jid := strings.Replace(action.Attributes["jid"], "@c.us", "@s.whatsapp.net", 1)
+			chat := wac.Store.Chats[jid]
+
+			switch action.Attributes["type"] {
+			case "pin":
+				chat.Pin = action.Attributes["pin"]
+			case "mute":
+				chat.Mute = action.Attributes["mute"]
+			case "archive":
+				chat.Archive = true
+			case "unarchive":
+				chat.Archive = false
+			case "read":
+				chat.Unread = "0"
+			case "unread":
+				chat.Unread = "-1"
+			}
+
+		}
+
+		for _, h := range wac.handler {
+			if x, ok := h.(ActionHandler); ok {
+				if wac.shouldCallSynchronously(h) {
+					x.HandleAction(groupedAction)
+				} else {
+					go x.HandleAction(groupedAction)
+				}
+			}
+		}
+
+	}
+}
+
+// Action defines actions struct
+type Action struct {
+	Description string
+	Attributes  map[string]string
+	Content     interface{}
+}
+
+// WhatsApp does this way, maybe theres a better way to do it.
+func groupActionsByType(action binary.Node) Action {
+
+	var groupedAction Action
+
+	switch action.Description {
+	case "read":
+		groupedAction.Description = "chat"
+		groupedAction.Attributes = action.Attributes
+		if action.Attributes["type"] == "false" {
+			groupedAction.Attributes["type"] = "unread"
+		} else {
+			groupedAction.Attributes["type"] = "read"
+		}
+	default:
+		groupedAction.Description = action.Description
+		groupedAction.Attributes = action.Attributes
+		groupedAction.Content = action.Content
+	}
+
+	return groupedAction
 }
 
 func (wac *Conn) dispatch(msg interface{}) {
@@ -396,15 +480,19 @@ func (wac *Conn) dispatch(msg interface{}) {
 	case *binary.Node:
 
 		if message.Description == "action" {
+			fmt.Printf("The type is: %T\n", message.Content)
 			if con, ok := message.Content.([]interface{}); ok {
+
 				for a := range con {
-					fmt.Printf("connais %v\n", con[a])
 					if v, ok := con[a].(*proto.WebMessageInfo); ok {
 						wac.handle(v)
 						wac.handle(ParseProtoMessage(v))
 					}
 				}
+			} else {
+				wac.handleActionNode(message.Content)
 			}
+
 		} else if message.Description == "response" && message.Attributes["type"] == "contacts" {
 			wac.updateContacts(message.Content)
 			wac.handleContacts(message.Content)
