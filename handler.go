@@ -395,19 +395,16 @@ func (wac *Conn) dispatch(msg interface{}) {
 
 	case *binary.Node:
 
-		fmt.Printf("%v\n", message.Description)
-		fmt.Printf("%v\n", message)
-
 		if message.Description == "action" {
 			if con, ok := message.Content.([]interface{}); ok {
 				for a := range con {
 					if v, ok := con[a].(*proto.WebMessageInfo); ok {
 						wac.handle(v)
 						wac.handle(ParseProtoMessage(v))
-					} else {
-						fmt.Printf("Not is webmessageinfo")
 					}
 				}
+			} else {
+				fmt.Printf("Content: %v", message.Content)
 			}
 		} else if message.Description == "response" && message.Attributes["type"] == "contacts" {
 			wac.updateContacts(message.Content)
