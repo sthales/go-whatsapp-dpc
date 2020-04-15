@@ -398,13 +398,12 @@ func (wac *Conn) dispatch(msg interface{}) {
 		if message.Description == "action" {
 			if con, ok := message.Content.([]interface{}); ok {
 				for a := range con {
+					fmt.Printf("connais %v\n", con[a])
 					if v, ok := con[a].(*proto.WebMessageInfo); ok {
 						wac.handle(v)
 						wac.handle(ParseProtoMessage(v))
 					}
 				}
-			} else {
-				fmt.Printf("Content: %v", message.Content)
 			}
 		} else if message.Description == "response" && message.Attributes["type"] == "contacts" {
 			wac.updateContacts(message.Content)
