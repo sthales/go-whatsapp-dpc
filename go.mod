@@ -7,7 +7,7 @@ require (
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 )
 
-replace github.com/Rhymen/go-whatsapp => github.com/sthales/go-whatsapp-dpc v0.0.0-20200415232251-596e33dd4915
+replace github.com/Rhymen/go-whatsapp => ./
 
 replace github.com/Rhymen/go-whatsapp/examples/echo => ./examples/echo
 
