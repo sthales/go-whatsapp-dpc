@@ -388,17 +388,24 @@ func (wac *Conn) dispatch(msg interface{}) {
 	}
 
 	fmt.Println("---------------------------------------------------------")
-	fmt.Println("%v", msg)
+	fmt.Printf("%v\n", msg)
 	fmt.Println("---------------------------------------------------------")
 
 	switch message := msg.(type) {
+
 	case *binary.Node:
+
+		fmt.Printf("%v\n", message.Description)
+		fmt.Printf("%v\n", message)
+
 		if message.Description == "action" {
 			if con, ok := message.Content.([]interface{}); ok {
 				for a := range con {
 					if v, ok := con[a].(*proto.WebMessageInfo); ok {
 						wac.handle(v)
 						wac.handle(ParseProtoMessage(v))
+					} else {
+						fmt.Printf("Not is webmessageinfo")
 					}
 				}
 			}
