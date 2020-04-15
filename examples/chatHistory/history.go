@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/sthales/go-whatsapp-dpc"
+	"github.com/Rhymen/go-whatsapp"
 	"log"
 	"time"
 )

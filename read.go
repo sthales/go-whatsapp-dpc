@@ -9,10 +9,10 @@ import (
 	"io/ioutil"
 	"strings"
 
+	"github.com/Rhymen/go-whatsapp/binary"
+	"github.com/Rhymen/go-whatsapp/crypto/cbc"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
-	"github.com/sthales/go-whatsapp-dpc/binary"
-	"github.com/sthales/go-whatsapp-dpc/crypto/cbc"
 )
 
 func (wac *Conn) readPump() {

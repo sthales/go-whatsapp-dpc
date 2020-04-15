@@ -1,21 +1,20 @@
-module github.com/sthales/go-whatsapp-dpc
+module github.com/Rhymen/go-whatsapp
 
 require (
-	github.com/Rhymen/go-whatsapp v0.1.0
 	github.com/golang/protobuf v1.3.5
 	github.com/gorilla/websocket v1.4.2
 	github.com/pkg/errors v0.9.1
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 )
 
-replace github.com/sthales/go-whatsapp-dpc => ./
+replace github.com/Rhymen/go-whatsapp => github.com/sthales/go-whatsapp-dpc v0.0.0-20200415232251-596e33dd4915
 
-replace github.com/sthales/go-whatsapp-dpc/examples/echo => ./examples/echo
+replace github.com/Rhymen/go-whatsapp/examples/echo => ./examples/echo
 
-replace github.com/sthales/go-whatsapp-dpc/examples/restoreSession => ./examples/restoreSession
+replace github.com/Rhymen/go-whatsapp/examples/restoreSession => ./examples/restoreSession
 
-replace github.com/sthales/go-whatsapp-dpc/examples/sendImage => ./examples/sendImage
+replace github.com/Rhymen/go-whatsapp/examples/sendImage => ./examples/sendImage
 
-replace github.com/sthales/go-whatsapp-dpc/examples/sendTextMessages => ./examples/sendTextMessages
+replace github.com/Rhymen/go-whatsapp/examples/sendTextMessages => ./examples/sendTextMessages
 
 go 1.13

@@ -5,7 +5,7 @@ Package sthales/go-whatsapp-dpc implements the WhatsApp Web API to provide a cle
 ## Installation
 
 ```sh
-go get github.com/sthales/go-whatsapp-dpc
+go get github.com/Rhymen/go-whatsapp
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ go get github.com/sthales/go-whatsapp-dpc
 
 ```go
 import (
-    whatsapp "github.com/sthales/go-whatsapp-dpc"
+    whatsapp "github.com/Rhymen/go-whatsapp"
 )
 
 wac, err := whatsapp.NewConn(20 * time.Second)

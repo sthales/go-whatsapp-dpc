@@ -3,7 +3,7 @@ package whatsapp
 import (
 	"strings"
 
-	"github.com/sthales/go-whatsapp-dpc/binary"
+	"github.com/Rhymen/go-whatsapp/binary"
 )
 
 type Store struct {
