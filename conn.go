@@ -120,7 +120,7 @@ func NewConn(timeout time.Duration) (*Conn, error) {
 		Store:      newStore(),
 
 		longClientName:  "github.com/Rhymen/go-whatsapp",
-		shortClientName: "go-whatsapp-dpc",
+		shortClientName: "go-whatsapp",
 	}
 	return wac, wac.connect()
 }
