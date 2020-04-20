@@ -28,7 +28,10 @@ func (wac *Conn) readPump() {
 	for {
 		readerFound := make(chan struct{})
 		go func() {
-			msgType, reader, readErr = wac.ws.conn.NextReader()
+			// msgType, reader, readErr = wac.ws.conn.NextReader()
+			if wac.ws != nil {
+				msgType, reader, readErr = wac.ws.conn.NextReader()
+			}
 			close(readerFound)
 		}()
 		select {
