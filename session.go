@@ -107,7 +107,7 @@ func CheckCurrentServerVersion() ([]int, error) {
 	}
 
 	b64ClientId := base64.StdEncoding.EncodeToString(clientId)
-	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName}, b64ClientId, true}
+	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName, "10.13.6"}, b64ClientId, true}
 	loginChan, err := wac.writeJson(login)
 	if err != nil {
 		return nil, fmt.Errorf("error writing login: %s", err.Error())
@@ -163,7 +163,7 @@ func (wac *Conn) GetClientVersion() []int {
 }
 
 func (wac *Conn) adminInitRequest(clientId string) (string, time.Duration, error) {
-	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName}, clientId, true}
+	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName, "10.13.6"}, clientId, true}
 	loginChan, err := wac.writeJson(login)
 	if err != nil {
 		return "", 0, fmt.Errorf("error writing login: %v\n", err)
@@ -236,7 +236,7 @@ func (wac *Conn) Login(qrChan chan<- string) (Session, error) {
 	}
 
 	session.ClientId = base64.StdEncoding.EncodeToString(clientId)
-	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName}, session.ClientId, true}
+	login := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName, "10.13.6"}, session.ClientId, true}
 	loginChan, err := wac.writeJson(login)
 	if err != nil {
 		return session, fmt.Errorf("error writing login: %v\n", err)
@@ -519,7 +519,7 @@ func (wac *Conn) Restore() error {
 	wac.listener.Unlock()
 
 	//admin init
-	init := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName}, wac.session.ClientId, true}
+	init := []interface{}{"admin", "init", waVersion, []string{wac.longClientName, wac.shortClientName, "10.13.6"}, wac.session.ClientId, true}
 	initChan, err := wac.writeJson(init)
 	if err != nil {
 		return fmt.Errorf("error writing admin init: %v\n", err)
