@@ -2,9 +2,10 @@ package whatsapp
 
 import (
 	"fmt"
-	"github.com/Rhymen/go-whatsapp/binary"
 	"strconv"
 	"time"
+
+	"github.com/Rhymen/go-whatsapp/binary"
 )
 
 type Presence string
@@ -47,8 +48,8 @@ func (wac *Conn) LoadMessagesBefore(jid, messageId string, count int) (*binary.N
 	return wac.query("message", jid, messageId, "before", "true", "", count, 0)
 }
 
-func (wac *Conn) LoadMessagesAfter(jid, messageId string, count int) (*binary.Node, error) {
-	return wac.query("message", jid, messageId, "after", "true", "", count, 0)
+func (wac *Conn) LoadMessagesAfter(jid, messageId string, fromMe bool, count int) (*binary.Node, error) {
+	return wac.query("message", jid, messageId, "after", strconv.FormatBool(fromMe), "", count, 0)
 }
 
 func (wac *Conn) LoadMediaInfo(jid, messageId, owner string) (*binary.Node, error) {
