@@ -421,6 +421,8 @@ func (wac *Conn) handleActionNode(actionContent interface{}) {
 				chat.Unread = "-1"
 			}
 
+		default:
+			continue
 		}
 
 		for _, h := range wac.handler {
