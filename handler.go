@@ -473,10 +473,6 @@ func (wac *Conn) dispatch(msg interface{}) {
 		return
 	}
 
-	fmt.Println("------------------------- New Event  ------------------------------")
-	fmt.Printf("%v\n", msg)
-	fmt.Println("---------------------------------------------------------")
-
 	switch message := msg.(type) {
 
 	case *binary.Node:
