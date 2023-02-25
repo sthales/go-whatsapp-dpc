@@ -4,7 +4,7 @@ require (
 	github.com/golang/protobuf v1.4.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/pkg/errors v0.9.1
-	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
+	golang.org/x/crypto v0.1.0
 	google.golang.org/protobuf v1.22.0
 )
 
